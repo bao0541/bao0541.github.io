@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>用docker搭建nginx+php+redis的开发环境 | Coding | only code for fun</title>
+
+  
+  <meta name="author" content="Tb.B">
+  
+
+  
+  <meta name="description" content="随便记录 家庭 工作 心得 work home">
+  
+
+  
+  <meta name="keywords" content="coding home work">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="用docker搭建nginx+php+redis的开发环境">
+
+  <meta property="og:site_name" content="Coding">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Coding" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Coding</a>
+    </h1>
+    <p class="site-description">only code for fun</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>用docker搭建nginx+php+redis的开发环境</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/11/06/用docker搭建nginx-php-redis的开发环境/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-11-05T16:56:42.000Z">
+          2018-11-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>最近MBP自己动手换了硬盘，需要重新搭建开发环境，又有点厌倦了vagrant。于是直接用docker搭建了开发环境。</p>
+<p>我有MySQL服务在阿里云上，所以本地暂时没有这个需求。<br>本地还有nodejs服务，接下来还会有go或者其他服务，所以3个服务独立开来会比较灵活。<br>我比较喜欢用<strong>docker-compose</strong>，用配置文件的形式开启docker服务。</p>
+<p><strong>~/docker/docker-compose.yml</strong><br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="comment">#nginx</span></span><br><span class="line"><span class="attr">  nginx-front:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line">    <span class="comment">#folders</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">~/blog:/www/blog</span></span><br><span class="line">    <span class="comment">#nginx confs</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./nginx/www.xssbtb.com.conf:/etc/nginx/conf.d/www.xssbtb.com.conf</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"80:80"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      front:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  php:</span></span><br><span class="line"><span class="attr">    build:</span> <span class="string">./php</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">~/blog:/www/blog</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      front:</span></span><br><span class="line"><span class="attr">        aliases:</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">php-fpm</span></span><br><span class="line"><span class="attr">      back:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      back:</span></span><br><span class="line"><span class="attr">        aliases:</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">redis</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  back:</span></span><br><span class="line"><span class="attr">  front:</span></span><br><span class="line"><span class="comment">#前后端网络区分开 aliases用于在网络中产生别名，可使通网络其他应用访问</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>~/docker/nginx/<a href="http://www.xssbtb.com.conf" target="_blank" rel="noopener">www.xssbtb.com.conf</a></strong><br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  www.xssbtb.com xssbtb.com;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span>   /www/blog/public;</span><br><span class="line">        <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>php的配置比较麻烦一点</p>
+<p><strong>~/docker/php/Dockerfile</strong><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">7.2</span>-fpm</span><br><span class="line"><span class="comment">#debian stretch源替换成163或其他</span></span><br><span class="line"><span class="keyword">COPY</span> ./sources.list /etc/apt/sources.list</span><br><span class="line">#替换php.ini配置文件</span><br><span class="line">COPY ./php.ini /usr/local/etc/php</span><br><span class="line"></span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y \</span><br><span class="line">		apt-utils \</span><br><span class="line">		libfreetype6-dev \</span><br><span class="line">        libjpeg62-turbo-dev \</span><br><span class="line">        libpng-dev \</span><br><span class="line">    &amp;&amp; docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \</span><br><span class="line">	&amp;&amp; docker-php-ext-install gd pdo_mysql bcmath</span><br><span class="line"></span><br><span class="line">RUN pecl install redis-4.0.1 \</span><br><span class="line">    &amp;&amp; docker-php-ext-enable redis</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/docker/">docker</a><a href="/tags/docker-compose/">docker-compose</a><a href="/tags/nginx/">nginx</a><a href="/tags/php/">php</a><a href="/tags/redis/">redis</a><a href="/tags/开发环境/">开发环境</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2018 Tb.B
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-49698085-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>
