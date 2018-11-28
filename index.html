@@ -65,6 +65,68 @@
 
   
     
+    <h3 class="article-title"><a href="/2018/11/28/php浮点数计算的坑/"><span>php浮点数计算的坑</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/11/28/php浮点数计算的坑/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-11-28T08:27:34.000Z">
+          2018-11-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>前段时间发现会有退款金额有出入,还以为是之前调整了系统的分佣比例,所以退款订单还有点异常.然后就没在意.<br>今天在测试订单的时候发现,原来是php的浮点数计算造成的坑😭.<br>原先也有遇到过这个问题,看来还是印象不够深刻.  </p>
+<ul>
+<li>php的金额计算最好像微信那样处理,全都转化成整数,以分为单位存取计算,在显示时<strong>➗100</strong>就可以了</li>
+<li>浮点数计算要用<strong>BCMath</strong>函数</li>
+<li>使用<strong>BCMATH</strong>函数时,一定要设置保留位数<ul>
+<li>使用<strong>bcscale</strong>全局设置</li>
+<li>具体方法后面填写<strong>scale</strong>参数</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/php浮点数/">php浮点数</a><a href="/tags/bc/">bc</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2018/11/08/Brotli代替gzip/"><span>Brotli代替gzip</span></a></h3>
     
   
@@ -168,7 +230,7 @@
 <p><strong>~/docker/docker-compose.yml</strong><br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="comment">#nginx</span></span><br><span class="line"><span class="attr">  nginx-front:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line">    <span class="comment">#folders</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">~/blog:/www/blog</span></span><br><span class="line">    <span class="comment">#nginx confs</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./nginx/www.xssbtb.com.conf:/etc/nginx/conf.d/www.xssbtb.com.conf</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"80:80"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      front:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  php:</span></span><br><span class="line"><span class="attr">    build:</span> <span class="string">./php</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">~/blog:/www/blog</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      front:</span></span><br><span class="line"><span class="attr">        aliases:</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">php-fpm</span></span><br><span class="line"><span class="attr">      back:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="attr">      back:</span></span><br><span class="line"><span class="attr">        aliases:</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">redis</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  back:</span></span><br><span class="line"><span class="attr">  front:</span></span><br><span class="line"><span class="comment">#前后端网络区分开 aliases用于在网络中产生别名，可使通网络其他应用访问</span></span><br></pre></td></tr></table></figure></p>
 <p><strong>~/docker/nginx/<a href="http://www.xssbtb.com.conf" target="_blank" rel="noopener">www.xssbtb.com.conf</a></strong><br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  www.xssbtb.com xssbtb.com;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span>   /www/blog/public;</span><br><span class="line">        <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>php的配置比较麻烦一点</p>
-<p><strong>~/docker/php/Dockerfile</strong><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">7.2</span>-fpm</span><br><span class="line"><span class="comment">#debian stretch源替换成163或其他</span></span><br><span class="line"><span class="keyword">COPY</span> ./sources.list /etc/apt/sources.list</span><br><span class="line">#替换php.ini配置文件</span><br><span class="line">COPY ./php.ini /usr/local/etc/php</span><br><span class="line"></span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y \</span><br><span class="line">		apt-utils \</span><br><span class="line">		libfreetype6-dev \</span><br><span class="line">        libjpeg62-turbo-dev \</span><br><span class="line">        libpng-dev \</span><br><span class="line">    &amp;&amp; docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \</span><br><span class="line">	&amp;&amp; docker-php-ext-install gd pdo_mysql bcmath</span><br><span class="line"></span><br><span class="line">RUN pecl install redis-4.0.1 \</span><br><span class="line">    &amp;&amp; docker-php-ext-enable redis</span><br></pre></td></tr></table></figure></p>
+<p><strong>~/docker/php/Dockerfile</strong><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">7.2</span>-fpm</span><br><span class="line"><span class="comment">#debian stretch源替换成163或其他</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> ./sources.list /etc/apt/sources.list</span></span><br><span class="line"><span class="bash"><span class="comment">#替换php.ini配置文件</span></span></span><br><span class="line"><span class="bash">COPY ./php.ini /usr/<span class="built_in">local</span>/etc/php</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">RUN apt-get update &amp;&amp; apt-get install -y \</span></span><br><span class="line"><span class="bash">		apt-utils \</span></span><br><span class="line"><span class="bash">		libfreetype6-dev \</span></span><br><span class="line"><span class="bash">        libjpeg62-turbo-dev \</span></span><br><span class="line"><span class="bash">        libpng-dev \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \</span></span><br><span class="line"><span class="bash">	&amp;&amp; docker-php-ext-install gd pdo_mysql bcmath</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">RUN pecl install redis-4.0.1 \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-enable redis</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>

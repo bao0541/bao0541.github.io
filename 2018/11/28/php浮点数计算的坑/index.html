@@ -3,7 +3,7 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>归档：2018/11 | Coding | only code for fun</title>
+  <title>php浮点数计算的坑 | Coding | only code for fun</title>
 
   
   <meta name="author" content="Tb.B">
@@ -21,7 +21,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  
+  <meta property="og:title" content="php浮点数计算的坑">
 
   <meta property="og:site_name" content="Coding">
 
@@ -60,54 +60,67 @@
 </header>
 
     <main class="site-main posts-loop">
-    
+    <article>
 
-<article>
-
-  <h2 class="article-title ">2018/11</h2>
-
-  <div class="archive">
-    
-      <div class="post archive">
-        <div class="archive-post">
-          <time datetime="2018-11-28T08:27:34.000Z">
-            <a href="/2018/11/28/php浮点数计算的坑/">2018-11-28</a>
-          </time>
-          
-            <h3 class="archive-title"><a href="/2018/11/28/php浮点数计算的坑/"><span>php浮点数计算的坑</span></a></h3>
-          
-        </div>
-      </div>
-    
-      <div class="post archive">
-        <div class="archive-post">
-          <time datetime="2018-11-08T01:37:59.000Z">
-            <a href="/2018/11/08/Brotli代替gzip/">2018-11-08</a>
-          </time>
-          
-            <h3 class="archive-title"><a href="/2018/11/08/Brotli代替gzip/"><span>Brotli代替gzip</span></a></h3>
-          
-        </div>
-      </div>
-    
-      <div class="post archive">
-        <div class="archive-post">
-          <time datetime="2018-11-05T16:56:42.000Z">
-            <a href="/2018/11/06/用docker搭建nginx-php-redis的开发环境/">2018-11-06</a>
-          </time>
-          
-            <h3 class="archive-title"><a href="/2018/11/06/用docker搭建nginx-php-redis的开发环境/"><span>用docker搭建nginx+php+redis的开发环境</span></a></h3>
-          
-        </div>
-      </div>
-    
-    <nav class="pagination">
   
+    
+    <h3 class="article-title"><span>php浮点数计算的坑</span></h3>
+    
   
-</nav>
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/11/28/php浮点数计算的坑/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-11-28T08:27:34.000Z">
+          2018-11-28
+        </time>
+      </a>
+    </span>
   </div>
 
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>前段时间发现会有退款金额有出入,还以为是之前调整了系统的分佣比例,所以退款订单还有点异常.然后就没在意.<br>今天在测试订单的时候发现,原来是php的浮点数计算造成的坑😭.<br>原先也有遇到过这个问题,看来还是印象不够深刻.  </p>
+<ul>
+<li>php的金额计算最好像微信那样处理,全都转化成整数,以分为单位存取计算,在显示时<strong>➗100</strong>就可以了</li>
+<li>浮点数计算要用<strong>BCMath</strong>函数</li>
+<li>使用<strong>BCMATH</strong>函数时,一定要设置保留位数<ul>
+<li>使用<strong>bcscale</strong>全局设置</li>
+<li>具体方法后面填写<strong>scale</strong>参数</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/php浮点数/">php浮点数</a><a href="/tags/bc/">bc</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
 </article>
+
+
     </main>
 
     <footer class="site-footer">
