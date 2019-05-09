@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>php使用redis调用lua | Coding | only code for fun</title>
+
+  
+  <meta name="author" content="Tb.B">
+  
+
+  
+  <meta name="description" content="随便记录 家庭 工作 心得 work home">
+  
+
+  
+  <meta name="keywords" content="coding home work">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="php使用redis调用lua">
+
+  <meta property="og:site_name" content="Coding">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Coding" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Coding</a>
+    </h1>
+    <p class="site-description">only code for fun</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>php使用redis调用lua</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/05/10/php使用redis调用lua/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-05-09T16:51:46.000Z">
+          2019-05-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>  今天看到laravel在队列处理的时候用了lua脚本<br><a href="https://github.com/laravel/framework/blob/5.8/src/Illuminate/Queue/LuaScripts.php" target="_blank" rel="noopener">gayhub.com</a><br><del>后来查了下，原来php还有个lua的扩展，真的是孤陋寡闻了</del></p>
+<p>redis可以通过EVAL调用lua脚本 <a href="https://redis.io/commands/eval" target="_blank" rel="noopener">EVAL</a><br>eval的参数顺序： lua脚本，key数量，所有的键名，所有的值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; eval &quot;return &#123;KEYS[1],KEYS[2],ARGV[1],ARGV[2]&#125;&quot; 2 key1 key2 first second</span><br><span class="line">1) &quot;key1&quot;</span><br><span class="line">2) &quot;key2&quot;</span><br><span class="line">3) &quot;first&quot;</span><br><span class="line">4) &quot;second&quot;</span><br></pre></td></tr></table></figure></p>
+<p>php中redis的eval参数顺序：lua脚本，参数数组，key数量<a href="https://github.com/phpredis/phpredis/#eval" target="_blank" rel="noopener">phpredis-&gt;eval</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$redis-&gt;eval(&quot;return 1&quot;); // Returns an integer: 1</span><br><span class="line">$redis-&gt;eval(&quot;return &#123;1,2,3&#125;&quot;); // Returns [1,2,3]</span><br><span class="line">$redis-&gt;del(&apos;mylist&apos;);</span><br><span class="line">$redis-&gt;rpush(&apos;mylist&apos;,&apos;a&apos;);</span><br><span class="line">$redis-&gt;rpush(&apos;mylist&apos;,&apos;b&apos;);</span><br><span class="line">$redis-&gt;rpush(&apos;mylist&apos;,&apos;c&apos;);</span><br><span class="line">// Nested response:  [1,2,3,[&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]];</span><br><span class="line">$redis-&gt;eval(&quot;return &#123;1,2,3,redis.call(&apos;lrange&apos;,&apos;mylist&apos;,0,-1)&#125;&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>通常php会用redis的setnx来加锁，但是setnx有一个缺陷，锁过期时间3秒，a程序执行时间超过3秒，锁已经解除，下个程序b进来锁上，a执行完解锁，解的是b的锁<br>还有一些负责操作必须通过lua脚本来保证原子性，比如把一个list的数据复制到另一个list  </p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 Tb.B
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-49698085-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>
